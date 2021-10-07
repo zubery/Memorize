@@ -8,17 +8,19 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
+    typealias Card = MemoryGame<String>.Card
+    
     // MARK: - Type Variables and Functions
-    static let fruitTheme = MemoryGameTheme<String>(name: "Fruit", cardContent: ["🍏", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝"], colors: ["pink", "purple"])
-    static let catTheme = MemoryGameTheme<String>(name: "Cats", cardContent: ["😹", "😻", "🙀", "😿", "😽", "😸", "🐱", "😾", "😼"], pairsOfCards: 6, colors: ["orange", "yellow"])
-    static let travelTheme = MemoryGameTheme<String>(name: "Travel", cardContent: ["🛫", "🚞", "🗺", "🏖", "🏜", "🌋", "🏔", "🏕", "🛣", "🌃"], colors: ["red", "blue"])
-    static let weatherTheme = MemoryGameTheme<String>(name: "Weather", cardContent: ["🌈", "☀️", "⛅️", "☁️", "🌧", "🌩", "🌨", "🌙"], pairsOfCards: 8, colors: ["red", "orange", "yellow", "green", "blue", "purple"])
-    static let scienceTheme = MemoryGameTheme<String>(name: "Science", cardContent: ["🧑🏾‍🔬", "🧫", "🧬", "🔬", "⚗️", "🔭", "🥼", "🧪"], pairsOfCards: nil, colors: ["blue", "green"])
-    static let flagTheme = MemoryGameTheme<String>(name: "Flags", cardContent: ["🏳️‍🌈", "🏳️‍⚧️", "🇺🇳", "🇦🇷", "🇧🇩", "🇨🇳", "🇩🇰", "🇪🇬", "🇫🇷", "🇬🇭", "🇭🇰", "🇮🇪", "🇯🇵", "🇰🇪", "🇱🇦", "🇲🇽", "🇳🇿", "🇴🇲", "🇵🇷", "🇶🇦", "🇷🇼", "🇸🇾", "🇹🇭", "🇺🇸", "🇻🇳", "🇾🇪", "🇿🇲"], pairsOfCards: nil, colors: ["pink", "yellow"])
+    private static let fruitTheme = MemoryGameTheme<String>(name: "Fruit", cardContent: ["🍏", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝"], colors: ["pink", "purple"])
+    private static let catTheme = MemoryGameTheme<String>(name: "Cats", cardContent: ["😹", "😻", "🙀", "😿", "😽", "😸", "🐱", "😾", "😼"], pairsOfCards: 6, colors: ["orange", "yellow"])
+    private static let travelTheme = MemoryGameTheme<String>(name: "Travel", cardContent: ["🛫", "🚞", "🗺", "🏖", "🏜", "🌋", "🏔", "🏕", "🛣", "🌃"], colors: ["red", "blue"])
+    private static let weatherTheme = MemoryGameTheme<String>(name: "Weather", cardContent: ["🌈", "☀️", "⛅️", "☁️", "🌧", "🌩", "🌨", "🌙"], pairsOfCards: 8, colors: ["red", "orange", "yellow", "green", "blue", "purple"])
+    private static let scienceTheme = MemoryGameTheme<String>(name: "Science", cardContent: ["🧑🏾‍🔬", "🧫", "🧬", "🔬", "⚗️", "🔭", "🥼", "🧪"], pairsOfCards: nil, colors: ["blue", "green"])
+    private static let flagTheme = MemoryGameTheme<String>(name: "Flags", cardContent: ["🏳️‍🌈", "🏳️‍⚧️", "🇺🇳", "🇦🇷", "🇧🇩", "🇨🇳", "🇩🇰", "🇪🇬", "🇫🇷", "🇬🇭", "🇭🇰", "🇮🇪", "🇯🇵", "🇰🇪", "🇱🇦", "🇲🇽", "🇳🇿", "🇴🇲", "🇵🇷", "🇶🇦", "🇷🇼", "🇸🇾", "🇹🇭", "🇺🇸", "🇻🇳", "🇾🇪", "🇿🇲"], pairsOfCards: nil, colors: ["pink", "yellow"])
     
-    static let emojiThemes = [fruitTheme, catTheme, travelTheme, weatherTheme, scienceTheme, flagTheme]
+    private static let emojiThemes = [fruitTheme, catTheme, travelTheme, weatherTheme, scienceTheme, flagTheme]
     
-    static func createMemoryGame(theme: MemoryGameTheme<String>) -> MemoryGame<String> {
+    private static func createMemoryGame(theme: MemoryGameTheme<String>) -> MemoryGame<String> {
         let shuffledEmojiSet = Array(theme.contentSet).shuffled()
         
         return MemoryGame<String>(numberOfPairsOfCards: theme.pairsOfCards) { pairIndex in
@@ -39,7 +41,7 @@ class EmojiMemoryGame: ObservableObject {
     
     private var theme: MemoryGameTheme<String>
     
-    var cards: [MemoryGame<String>.Card] {
+    var cards: [Card] {
         return model.cards
     }
     
@@ -84,7 +86,7 @@ class EmojiMemoryGame: ObservableObject {
     
     // MARK: - Intent(s)
     
-    func choose(_ card: MemoryGame<String>.Card) {
+    func choose(_ card: Card) {
         model.choose(card)
     }
     

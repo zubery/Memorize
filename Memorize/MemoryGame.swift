@@ -11,7 +11,10 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: [Card]
     private(set) var score: Double
     
-    private var indexOfOnlyFaceUpCard: Int?
+    private var indexOfOnlyFaceUpCard: Int? {
+        get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
+        set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
+    }
     private(set) var timeLastCardChosen: Date?
     
     mutating func choose(_ card: Card) {
@@ -34,23 +37,13 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                         penalty()
                     }
                 }
-                indexOfOnlyFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
                 timeLastCardChosen = nil
             } else {
-                for index in cards.indices {
-                    // Flip face up cards down, mark face up cards as seen
-                    // TODO: Do I need these if checks?
-                    if cards[index].isFaceUp {
-                        if !cards[index].hasBeenSeen {
-                            cards[index].hasBeenSeen = true
-                        }
-                        cards[index].isFaceUp = false
-                    }
-                }
+                cards.indices.forEach { cards[$0].hasBeenSeen = cards[$0].isFaceUp ? true : cards[$0].hasBeenSeen }
                 indexOfOnlyFaceUpCard = chosenIndex
                 timeLastCardChosen = Date()
             }
-            cards[chosenIndex].isFaceUp.toggle()
         }
     }
     
@@ -71,7 +64,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     }
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
-        cards = [Card]()
+        cards = []
         score = 0
         
         for pairIndex in 0..<numberOfPairsOfCards {
@@ -83,11 +76,22 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         cards.shuffle()
     }
     
+    // TODO: Are you using type inference everywhere?
     struct Card: Identifiable {
-        var isFaceUp = false
+        var isFaceUp = true
         var isMatched = false
         var hasBeenSeen = false
-        var content: CardContent
-        var id: Int
+        let content: CardContent
+        let id: Int
+    }
+}
+
+extension Array {
+    var oneAndOnly: Element? {
+        if count == 1 {
+            return first
+        } else {
+            return nil
+        }
     }
 }
